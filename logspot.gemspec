@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.email = ['tetsuri.moriya@gmail.com']
   s.summary = 'Logger'
   s.description = 'Logger with various output forms'
-  s.homepage = 'https://github.com/pandora2000/'
+  s.homepage = 'https://github.com/pandora2000/logspot'
   s.license = 'MIT'
   s.files = `git ls-files`.split("\n")
   s.add_development_dependency 'rspec', '>= 0'
