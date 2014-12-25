@@ -5,7 +5,7 @@ class LoGspot
 
   def initialize(file_name, wrapper = nil)
     wrapper = ->(output, data) {
-      base = "[#{Time.now.strftime('%Y/%m/%d %H:%M:%S')} #{level[0]}] "
+      base = "[#{Time.now.strftime('%Y/%m/%d %H:%M:%S')} #{level}] "
       if data[:space]
         base = ' ' * base.length
       end
@@ -50,27 +50,27 @@ class LoGspot
     end
   end
 
-  def value(v, options = {})
+  def value(level, v, options = {})
     if v.is_a?(Hash)
       hash(v) do |k, v|
-        value(v, options)
+        value(level, v, options)
       end
     elsif v.is_a?(Array)
       h = Hash[v.map.with_index do |v, i|
                  [i.to_s, v]
                end]
-      value(h, options)
+      value(level, h, options)
     else
       if p = options[:split_proc]
         p.call(v.to_s).each do |line|
-          write(@level, line)
+          send(level, line)
         end
       elsif max = options[:max_columns]
         v.to_s.split('').each_slice(max).map { |x| x.join('') }.each do |line|
-          write(@level, line)
+          send(level, line)
         end
       else
-        write(@level, v)
+        send(level, v)
       end
     end
   end
@@ -87,11 +87,6 @@ class LoGspot
     end
   end
 
-  def write(l, *args, &block)
-    @level = l
-    output.puts(message: args[0], args: args, arg_block: block)
-  end
-
   def finalize
     @file.finalize
   end
@@ -99,6 +94,11 @@ class LoGspot
   private
 
   attr_reader :original_output, :output, :level
+
+  def write(l, *args, &block)
+    @level = l
+    output.puts(message: args[0], args: args, arg_block: block)
+  end
 
   def wrap_output(block, *args, &wrapper)
     previous_output, @output = output, Output::Wrap.new(wrapper, output)

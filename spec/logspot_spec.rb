@@ -11,4 +11,11 @@ describe LoGspot do
       expect(read.call).to include 'test'
     end
   end
+
+  describe '#value' do
+    it 'should output' do
+      logger.value(:info, test: 'test')
+      expect(read.call).to include 'test: test'
+    end
+  end
 end
