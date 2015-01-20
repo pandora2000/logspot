@@ -65,11 +65,9 @@ describe LoGspot do
 
     it 'should output properly' do
       logger.tagged('tag') do
-        logger.raw do
-          logger.info('test')
-        end
+        logger.raw('test')
       end
-      expect(read.()).to eq "test\n"
+      expect(read.()).to eq "test"
     end
   end
 end

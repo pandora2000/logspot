@@ -87,10 +87,8 @@ class LoGspot
     @output = previous_output
   end
 
-  def raw(&block)
-    previous_output, @output = output, raw_output
-    block.call
-    @output = previous_output
+  def raw(message)
+    raw_output.write(message)
   end
 
   LOG_LEVELS.each do |level|

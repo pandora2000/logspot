@@ -15,6 +15,11 @@ class LoGspot::Output::File
     file.flush
   end
 
+  def write(message)
+    file.write(message)
+    file.flush
+  end
+
   def finalize
     file.close if physical
   end
