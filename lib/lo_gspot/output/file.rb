@@ -1,7 +1,13 @@
 class LoGspot::Output::File
-  def initialize(file_name)
-    FileUtils.mkdir_p(File.dirname(file_name))
-    @file = File.open(file_name, 'a')
+  def initialize(arg)
+    if arg.is_a?(String)
+      @physical = true
+      FileUtils.mkdir_p(File.dirname(arg))
+      @file = File.open(arg, 'a')
+    else
+      @physical = false
+      @file = arg
+    end
   end
 
   def puts(data)
@@ -10,10 +16,10 @@ class LoGspot::Output::File
   end
 
   def finalize
-    @file.close
+    file.close if physical
   end
 
   private
 
-  attr_reader :file
+  attr_reader :file, :physical
 end

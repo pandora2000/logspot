@@ -3,7 +3,7 @@ require_relative 'initialize'
 class LoGspot
   LOG_LEVELS = %w(DEBUG INFO WARN ERROR FATAL)
 
-  def initialize(file_name, wrapper = nil)
+  def initialize(file_or_file_name = STDOUT, wrapper = nil)
     wrapper = ->(output, data) {
       base = "[#{Time.now.strftime('%Y/%m/%d %H:%M:%S')} #{level}] "
       if data[:space]
@@ -11,7 +11,7 @@ class LoGspot
       end
       output.puts(message: "#{base}#{data[:message]}")
     }
-    @file = Output::File.new(file_name)
+    @file = Output::File.new(file_or_file_name)
     @output = @original_output = Output::Wrap.new(wrapper, @file)
     @level = nil
   end
