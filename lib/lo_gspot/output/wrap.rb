@@ -8,6 +8,10 @@ class LoGspot::Output::Wrap
     wrapper.call(output, data)
   end
 
+  def inner_output
+    output
+  end
+
   private
 
   attr_reader :wrapper, :output

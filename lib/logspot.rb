@@ -3,16 +3,16 @@ require_relative 'initialize'
 class LoGspot
   LOG_LEVELS = %w(DEBUG INFO WARN ERROR FATAL)
 
-  def initialize(file_or_file_name = STDOUT, wrapper = nil)
+  def initialize(file_or_file_name = STDOUT, wrapper: nil, tag_format: '[%{time} %{level}] ', time_format: '%Y/%m/%d %H:%M:%S', tag_block: nil)
     wrapper = ->(output, data) {
-      base = "[#{Time.now.strftime('%Y/%m/%d %H:%M:%S')} #{level}] "
+      base = tag_block ? tag_block.(Time.current, level) : tag_format % { time: Time.current.strftime(time_format), level: level }
       if data[:space]
         base = ' ' * base.length
       end
       output.puts(message: "#{base}#{data[:message]}")
     }
-    @file = Output::File.new(file_or_file_name)
-    @output = @original_output = Output::Wrap.new(wrapper, @file)
+    @raw_output = @file = Output::File.new(file_or_file_name)
+    @top_output = @output = Output::Wrap.new(wrapper, @file)
     @level = nil
   end
 
@@ -76,7 +76,19 @@ class LoGspot
   end
 
   def untagged(&block)
-    previous_output, @output = output, original_output
+    previous_output, @output = output, output.inner_output
+    block.call
+    @output = previous_output
+  end
+
+  def top(&block)
+    previous_output, @output = output, top_output
+    block.call
+    @output = previous_output
+  end
+
+  def raw(&block)
+    previous_output, @output = output, raw_output
     block.call
     @output = previous_output
   end
@@ -93,7 +105,7 @@ class LoGspot
 
   private
 
-  attr_reader :original_output, :output, :level
+  attr_reader :raw_output, :top_output, :output, :level
 
   def write(l, *args, &block)
     @level = l
