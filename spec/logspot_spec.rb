@@ -34,6 +34,42 @@ describe LoGspot do
     end
   end
 
+  describe '#tagged_list' do
+    it 'should output correctly indented logs' do
+      logger.tagged_list('tag') do
+        logger.info('test1')
+        logger.info('test2')
+      end
+      expect(read.()).to eq "tagtest1\n   test2\n"
+    end
+
+    context 'with tag format' do
+      let(:tag_format) { 'tag_format' }
+
+      it 'should output correctly indented logs' do
+        logger.tagged_list('tag') do
+          logger.info('test1')
+          logger.info('test2')
+        end
+        expect(read.()).to eq "tag_formattagtest1\n             test2\n"
+      end
+    end
+
+    context 'with tag block' do
+      let(:time) { Time.current }
+      let(:tag_block) { ->(t, level) { "#{time.to_s} #{level}" } }
+      let(:logger) { LoGspot.new(filename, tag_block: tag_block) }
+
+      it 'should output correctly indented logs' do
+        logger.tagged_list('tag') do
+          logger.info('test1')
+          logger.info('test2')
+        end
+        expect(read.()).to eq "#{time.to_s} INFOtagtest1\n#{' ' * time.to_s.length}        test2\n"
+      end
+    end
+  end
+
   describe '#untagged' do
     it 'should output properly' do
       logger.tagged('tag') do
