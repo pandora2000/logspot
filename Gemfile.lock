@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    logspot (0.6.0)
+    logspot (0.6.1)
       activesupport (>= 4)
 
 GEM
