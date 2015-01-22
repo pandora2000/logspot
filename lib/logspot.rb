@@ -19,7 +19,7 @@ class LoGspot
   def tagged(tag, &block)
     wrap_output(block) do |output, data|
       base = tag
-      if space = !!data[:space]
+      if space = data[:space]
         base = ' ' * base.length
       end
       output.puts(data.merge(message: "#{base}#{data[:message]}", space: space))
