@@ -7,7 +7,7 @@ class LoGspot
     wrapper = ->(output, data) {
       base = tag_block ? tag_block.(Time.current, level) : tag_format % { time: Time.current.strftime(time_format), level: level }
       if data[:space]
-        base = ' ' * base.length
+        base = ' ' * uncolorize_str(base).length
       end
       output.puts(message: "#{base}#{data[:message]}")
     }
@@ -20,7 +20,7 @@ class LoGspot
     wrap_output(block) do |output, data|
       base = tag
       if space = data[:space]
-        base = ' ' * base.length
+        base = ' ' * uncolorize_str(base).length
       end
       output.puts(data.merge(message: "#{base}#{data[:message]}", space: space))
     end
@@ -32,7 +32,7 @@ class LoGspot
       message = data[:message]
       base = tag
       if data[:space] || !first
-        base = ' ' * base.length
+        base = ' ' * uncolorize_str(base).length
       end
       if first
         output.puts(data.merge(message: "#{base}#{message}", space: false))
@@ -115,5 +115,9 @@ class LoGspot
     res = block.call(*args)
     @output = previous_output
     res
+  end
+
+  def uncolorize_str(str)
+    str.gsub(/\033\[[;0-9]+m/, '')
   end
 end
