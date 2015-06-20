@@ -4,7 +4,7 @@ describe LoGspot do
   let(:filename) { File.expand_path('../../tmp/spec.log', __FILE__) }
 
   before do
-    FileUtils.rm(filename)
+    FileUtils.rm(filename) if File.exists?(filename)
   end
 
   let(:tag_format) { '' }

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'logspot'
-  s.version = '0.6.2'
+  s.version = '0.6.4'
   s.authors = ['Tetsuri Moriya']
   s.email = ['tetsuri.moriya@gmail.com']
   s.summary = 'Logger'

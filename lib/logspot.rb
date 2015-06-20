@@ -4,8 +4,8 @@ class LoGspot
   LOG_LEVELS = %w(DEBUG INFO WARN ERROR FATAL)
 
   def initialize(file_or_file_name = STDOUT, wrapper: nil, tag_format: '[%{time} %{level}] ', time_format: '%Y/%m/%d %H:%M:%S', tag_block: nil)
-    wrapper = ->(output, data) {
-      base = tag_block ? tag_block.(Time.current, level) : tag_format % { time: Time.current.strftime(time_format), level: level }
+    wrapper ||= ->(output, data) {
+      base = tag_block ? tag_block.(Time.current, data[:level]) : tag_format % { time: Time.current.strftime(time_format), level: data[:level] }
       if data[:space]
         base = ' ' * uncolorize_str(base).length
       end
@@ -13,7 +13,6 @@ class LoGspot
     }
     @raw_output = @file = Output::File.new(file_or_file_name)
     @top_output = @output = Output::Wrap.new(wrapper, @file)
-    @level = nil
   end
 
   def tagged(tag, &block)
@@ -103,11 +102,10 @@ class LoGspot
 
   private
 
-  attr_reader :raw_output, :top_output, :output, :level
+  attr_reader :raw_output, :top_output, :output
 
   def write(l, *args, &block)
-    @level = l
-    output.puts(message: args[0], args: args, arg_block: block)
+    output.puts(level: l, message: args[0], args: args, arg_block: block)
   end
 
   def wrap_output(block, *args, &wrapper)
