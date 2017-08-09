@@ -1,6 +1,6 @@
-#LoGspot
+# LoGspot
 
-##Usage
+## Usage
 
 ### Initialization
 
